@@ -5,7 +5,9 @@ import static lombok.AccessLevel.PRIVATE;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lab1.beans.models.Event;
 import lab1.beans.models.Ticket;
 import lab1.beans.models.User;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController @RequestMapping("booking")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -81,13 +84,16 @@ public class BookingController {
   }
 
   @GetMapping
-  public List<Ticket> getTicketsForEvent(
+  public ModelAndView getTicketsForEvent(
       @RequestParam String event,
       @RequestParam String auditorium,
       @RequestParam(name = "date_time") @DateTimeFormat(iso = DATE_TIME)
           LocalDateTime eventDateTime) {
 
-    return _getTicketsForEvent(event, auditorium, eventDateTime);
+    Map<String, Object> model = new HashMap<>();
+    model.put("tickets", _getTicketsForEvent(event, auditorium, eventDateTime));
+
+    return new ModelAndView("getTicketsForEvent", model);
   }
 
   private List<Ticket> _getTicketsForEvent(String eventName, String auditoriumName,
